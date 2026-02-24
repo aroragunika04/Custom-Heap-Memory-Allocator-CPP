@@ -95,6 +95,8 @@ void* my_malloc(size_t size) {
     Block* curr = freeList;
     Block* target = nullptr;
 
+    if (!heapStart) initHeap();
+
     // 1. Search (Only traverse freeList)
     if (currentStrategy == AllocStrategy::FIRST_FIT) {
         while (curr != nullptr) {
@@ -280,3 +282,4 @@ void debugHeap() {
     cout << "Fragmentation:    " << (fragmentation * 100.0) << "%\n";
     cout << "-----------------------\n\n";
 }
+
