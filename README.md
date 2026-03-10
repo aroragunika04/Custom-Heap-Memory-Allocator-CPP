@@ -11,7 +11,7 @@ Instead of relying on the system allocator, memory is managed manually inside a 
 
 The allocator demonstrates how operating systems and runtime libraries manage heap memory, including **block splitting, coalescing, and fragmentation handling**.
 
-This project was built to deeply understand **low-level memory management and allocator design**.
+This project was built to understand **low-level memory management and allocator design**.
 
 ---
 
@@ -22,7 +22,7 @@ This project was built to deeply understand **low-level memory management and al
 * **Doubly Linked Heap List** to maintain physical block order
 * **Free List Optimization** for fast allocation search
 * **Block Splitting** during allocation
-* **Coalescing (Merging)** adjacent free blocks
+* **Coalescing (merging)** adjacent free blocks
 * **Multiple Allocation Strategies**
 
   * First Fit
@@ -61,6 +61,25 @@ Example heap structure:
 
 ---
 
+## Internal Organization
+
+To manage memory efficiently, the allocator maintains two linked structures.
+
+### Heap List (Physical Order)
+
+Tracks every block in the order it appears in memory.
+
+```text
+[Block A] <-> [Block B] <-> [Block C] <-> [Block D]
+```
+
+Used for:
+
+* Traversing the heap
+* Merging adjacent blocks during free operations
+
+---
+
 ## Allocation Flow
 
 The allocator follows this process during memory allocation:
@@ -81,17 +100,31 @@ Return pointer to user memory
 
 Example:
 
-Before allocation:
+Before allocation
 
 ```text
 |------------- FREE 500 -------------|
 ```
 
-After `malloc(100)`:
+After `malloc(100)`
 
 ```text
 |100 USED|------ FREE 400 ------|
 ```
+
+---
+
+## Block Splitting
+
+If a free block is larger than the requested memory, the allocator splits it into two blocks.
+
+Example:
+
+```text
+| Used 100 | Remaining Free |
+```
+
+The first block satisfies the allocation request while the remaining portion stays available in the free list.
 
 ---
 
@@ -113,13 +146,13 @@ Update free list
 
 Example:
 
-Before freeing middle block:
+Before freeing the middle block
 
 ```text
 |100 FREE|200 USED|300 FREE|
 ```
 
-After free + coalescing:
+After free + coalescing
 
 ```text
 |--------------- FREE 600 ---------------|
@@ -136,6 +169,22 @@ fragmentation = 1 - (largestFreeBlock / totalFreeSize)
 ```
 
 This metric shows how scattered the free memory is and how much of it is usable for large allocations.
+
+---
+
+## Allocation Strategies
+
+The allocator supports two strategies for selecting free blocks.
+
+**First Fit**
+
+Selects the first block in the free list that is large enough.
+
+**Best Fit**
+
+Searches the free list and selects the smallest block that satisfies the request.
+
+These strategies help illustrate how allocator policies can influence memory fragmentation.
 
 ---
 
@@ -158,12 +207,15 @@ Fragmentation: 40%
 
 ---
 
-**Block.h** – Metadata structure for memory blocks
-**HeapAllocator.cpp** – Core allocation and deallocation logic
-**HeapAllocator.h** – Public allocator interface
-**main.cpp** – Demonstration and test scenarios
+## Project Files
+
+* **Block.h** – Metadata structure for memory blocks
+* **HeapAllocator.cpp** – Core allocation and deallocation logic
+* **HeapAllocator.h** – Public allocator interface
+* **main.cpp** – Demonstration and test scenarios
 
 ---
+
 ## Running the Project
 
 Compile the program using `g++`:
@@ -177,13 +229,17 @@ Run the executable:
 ```bash
 ./allocator
 ```
+
 The demo runs several scenarios including:
 
-- basic allocations
-- block splitting
-- free and coalescing
-- error handling
-- comparison of First Fit vs Best Fit
+* basic allocations
+* block splitting
+* free and coalescing
+* error handling
+* comparison of First Fit vs Best Fit
+
+---
+
 ## Concepts Demonstrated
 
 This project explores several **core systems programming concepts**:
@@ -224,7 +280,4 @@ This project was built to gain a deeper understanding of:
 ## Author
 
 Gunika
-B.Tech Computer Science Engineering
-
----
 
