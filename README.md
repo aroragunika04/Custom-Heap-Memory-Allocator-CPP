@@ -79,11 +79,13 @@ Used for:
 * Merging adjacent blocks during free operations
 
 ---
-Free List
+### Free List
 
 Tracks only blocks that are currently available for allocation.
 
+```text
 [Block B] <-> [Block D]
+```
 
 Searching this list avoids scanning used blocks during allocation.
 ## Allocation Flow
