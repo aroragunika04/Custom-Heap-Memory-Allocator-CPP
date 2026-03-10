@@ -79,7 +79,13 @@ Used for:
 * Merging adjacent blocks during free operations
 
 ---
+Free List
 
+Tracks only blocks that are currently available for allocation.
+
+[Block B] <-> [Block D]
+
+Searching this list avoids scanning used blocks during allocation.
 ## Allocation Flow
 
 The allocator follows this process during memory allocation:
