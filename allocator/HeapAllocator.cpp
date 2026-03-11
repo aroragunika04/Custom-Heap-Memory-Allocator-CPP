@@ -10,7 +10,6 @@ static uint8_t heap[HEAP_SIZE];
 
 // POINTERS
 // heapStart: Points to the FIRST block in physical memory (start of the heap).
-//            Used for debug traversal and bounds checking.
 Block* heapStart = nullptr;
 
 // freeList: Points to the FIRST free block. 
@@ -146,8 +145,6 @@ void* my_malloc(size_t size) {
         target->next = newBlock;
 
         // c. Update Free List
-        // Instead of remove(target) + insert(newBlock), we can just replace target with newBlock in-place
-        // in the free list to be efficient!
         newBlock->nextFree = target->nextFree;
         newBlock->prevFree = target->prevFree;
         
@@ -194,7 +191,6 @@ void my_free(void* ptr) {
     cout << "Freed block at " << curr << "\n";
 
     // 1. Initial Insert (We will adjust this if we coalesce)
-    // Actually, checking neighbors first is easier.
     
     // Coalesce NEXT (Physical)
     if (curr->next && curr->next->free) {
@@ -231,7 +227,7 @@ void my_free(void* ptr) {
             prevParams->next->prev = prevParams;
         }
         
-        // 'prevParams' stays in free list. We are done.
+
     } else {
         // If we didn't merge with Prev, we MUST insert 'curr' into the free list ourselves.
         insertFree(curr);
@@ -282,4 +278,5 @@ void debugHeap() {
     cout << "Fragmentation:    " << (fragmentation * 100.0) << "%\n";
     cout << "-----------------------\n\n";
 }
+
 
